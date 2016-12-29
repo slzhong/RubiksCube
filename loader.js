@@ -18,6 +18,8 @@
   function _handleKeyDown(e) {
     if (e.keyCode >= 37 && e.keyCode <= 40) {
       _rotateCube(e.keyCode);
+    } else {
+      _moveCube(e);
     }
   };
 
@@ -39,5 +41,27 @@
         break;
     }  
   };
+
+  function _moveCube(e) {
+    let step = e.shiftKey ? -1 : 1;
+    let face;
+    if (e.keyCode == 70) {
+      face = 'front';
+    } else if (e.keyCode == 66) {
+      face = 'back';
+    } else if (e.keyCode == 85) {
+      face = 'up'
+    } else if (e.keyCode == 68) {
+      face = 'down';
+    } else if (e.keyCode == 76) {
+      face = 'left';
+    } else if (e.keyCode == 82) {
+      face = 'right';
+    }
+
+    if (face) {
+      cube.move(face, step);
+    }
+  }
 
 })();
