@@ -1,0 +1,56 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+#canvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  width: 300px;
+  height: 300px;
+  perspective: 1200px;
+}
+
+#cube {
+  width: 100px;
+  height: 100px;
+  margin: 100px auto;
+  backface-visibility: visible;
+  transform-style: preserve-3d;
+  transform-origin: 50px 50px 0;
+  transition: transform 0.3s;
+}
+
+.square {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border: 3px solid;
+  border-radius: 10px;
+}
+
+.square-red {
+  background: #f00;
+}
+.square-white {
+  background: #fff;
+}
+.square-yellow {
+  background: #ff0;
+}
+.square-green {
+  background: #0f0;
+}
+.square-blue {
+  background: #00f;
+}
+.square-orange {
+  background: #f90;
+}
