@@ -44,6 +44,7 @@
   height: 100px;
   background: #000;
   transform-style: preserve-3d;
+  transition: transform 0.3s;
 }
 
 .square {

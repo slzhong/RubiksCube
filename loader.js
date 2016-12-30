@@ -18,6 +18,8 @@
   function _handleKeyDown(e) {
     if (e.keyCode >= 37 && e.keyCode <= 40) {
       _rotateCube(e.keyCode);
+    } else if (e.keyCode == 83) {
+      _shuffleCube();
     } else {
       _moveCube(e);
     }
@@ -62,6 +64,10 @@
     if (face) {
       cube.move(face, step);
     }
+  }
+
+  function _shuffleCube() {
+    cube.shuffle();
   }
 
 })();
