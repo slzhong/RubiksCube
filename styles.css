@@ -4,6 +4,7 @@
   padding: 0;
   border: none;
   background: none;
+  font-family: sans-serif;
 }
 
 #hint {
@@ -15,6 +16,14 @@
 }
 #hint:hover {
   opacity: 1;
+}
+
+#easter {
+  position: absolute;
+  bottom: 20px;
+  display: block;
+  width: 100%;
+  text-align: center;
 }
 
 #canvas {

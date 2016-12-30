@@ -22,30 +22,10 @@
     move(face, step) {
       if (!this.moving) {
         this.moving = true;
-        const faces = document.querySelectorAll(`.square-${face}`);
-        for (let i = 0; i < faces.length; i++) {
-          const triple = _getTransformValue(faces[i].parentNode.style.transform);
-          faces[i].parentNode.style.transform = `
-            rotateX(${(MOVE_MAP[face].rX || 0) * step + triple.rX}deg)
-            rotateY(${(MOVE_MAP[face].rY || 0) * step + triple.rY}deg)
-            rotateZ(${(MOVE_MAP[face].rZ || 0) * step + triple.rZ}deg)
-            translateX(${triple.tX}px)
-            translateY(${triple.tY}px)
-            translateZ(${triple.tZ}px)
-          `;
-
-          const siblings = faces[i].parentNode.childNodes;
-          for (let j = 0; j < siblings.length; j++) {
-            const current = siblings[j].className.split('-').pop();
-            if (current !== face) {
-              siblings[j].classList.remove(`square-${current}`);
-              siblings[j].classList.add(`square-${step > 0 ? MOVE_MAP[face].swap[current] : MOVE_MAP[face].swapReverse[current]}`);
-            }
-          }
-
-          setTimeout(() => {
-            _reinitCubelet(this, faces[i].parentNode);
-          }, 310);
+        if (face === 'x' || face === 'y' || face === 'z') {
+          _moveCenters(this, face, step);
+        } else {
+          _moveFaces(this, face, step);
         }
 
         setTimeout(() => {
@@ -55,7 +35,7 @@
     }
 
     shuffle() {
-      const moves = ['front', 'back', 'up', 'down', 'left', 'right'];
+      const moves = ['front', 'back', 'up', 'down', 'left', 'right', 'x', 'y', 'z'];
       
       let count = 0;
       const iter = setInterval(() => {
@@ -65,6 +45,17 @@
           this.move(moves[Math.floor(Math.random() * moves.length)], Math.random() * 2 > 1 ? 1 : -1);
         }
       }, 350);
+    }
+
+    reposition() {
+      this.body.style.transform = `
+        rotateX(-20deg) 
+        rotateY(-30deg) 
+        rotateZ(0deg)
+        translateX(0px)
+        translateY(0px)
+        translateZ(0px)
+      `;
     }
 
   };
@@ -161,11 +152,63 @@
         left: 'back',
         right: 'front'
       }
+    },
+    x: {
+      centers: ['front', 'back', 'left', 'right'],
+      edges: ['front-left', 'front-right', 'back-left', 'back-right'],
+      rY: -90,
+      swap: {
+        front: 'left',
+        back: 'right',
+        left: 'back',
+        right: 'front'
+      },
+      swapReverse: {
+        front: 'right',
+        back: 'left',
+        left: 'front',
+        right: 'back'
+      }
+    },
+    y: {
+      centers: ['front', 'back', 'up', 'down'],
+      edges: ['front-up', 'front-down', 'back-up', 'back-down'],
+      rX: -90,
+      swap: {
+        up: 'front',
+        down: 'back',
+        front: 'down',
+        back: 'up'
+      },
+      swapReverse: {
+        up: 'back',
+        down: 'front',
+        front: 'up',
+        back: 'down'
+      }
+    },
+    z: {
+      centers: ['up', 'down', 'left', 'right'],
+      edges: ['up-left', 'up-right', 'down-left', 'down-right'],
+      rZ: 90,
+      swap: {
+        up: 'right',
+        down: 'left',
+        left: 'up',
+        right: 'down'
+      },
+      swapReverse: {
+        up: 'left',
+        down: 'right',
+        left: 'down',
+        right: 'up'
+      }
     }
   };
 
   const _initBody = (self) => {
     self.body = document.querySelector('#cube');
+    self.body.innerHTML = '';
     self.body.style.transform = `
       rotateX(-20deg) 
       rotateY(-30deg) 
@@ -480,6 +523,80 @@
 
     self.body.removeChild(cubelet);
     _initCubelet(self, tX, tY, tZ, childrenParams);
+  };
+
+  const _moveFaces = (self, face, step) => {
+    const faces = document.querySelectorAll(`.square-${face}`);
+    for (let i = 0; i < faces.length; i++) {
+      const triple = _getTransformValue(faces[i].parentNode.style.transform);
+      faces[i].parentNode.style.transform = `
+        rotateX(${(MOVE_MAP[face].rX || 0) * step + triple.rX}deg)
+        rotateY(${(MOVE_MAP[face].rY || 0) * step + triple.rY}deg)
+        rotateZ(${(MOVE_MAP[face].rZ || 0) * step + triple.rZ}deg)
+        translateX(${triple.tX}px)
+        translateY(${triple.tY}px)
+        translateZ(${triple.tZ}px)
+      `;
+
+      const siblings = faces[i].parentNode.childNodes;
+      for (let j = 0; j < siblings.length; j++) {
+        const current = siblings[j].className.split('-').pop();
+        if (current !== face) {
+          siblings[j].classList.remove(`square-${current}`);
+          siblings[j].classList.add(`square-${step > 0 ? MOVE_MAP[face].swap[current] : MOVE_MAP[face].swapReverse[current]}`);
+        }
+      }
+
+      setTimeout(() => {
+        _reinitCubelet(self, faces[i].parentNode);
+      }, 310);
+    }
+  };
+
+  const _moveCenters = (self, face, step) => {
+    let cubelets = [];
+    for (let i = 0; i < self.body.childNodes.length; i++) {
+      let cubelet = self.body.childNodes[i];
+      if (cubelet.childNodes.length === 1 && 
+          (cubelet.childNodes[0].className.indexOf(MOVE_MAP[face].centers[0]) > -1 ||
+           cubelet.childNodes[0].className.indexOf(MOVE_MAP[face].centers[1]) > -1 ||
+           cubelet.childNodes[0].className.indexOf(MOVE_MAP[face].centers[2]) > -1 ||
+           cubelet.childNodes[0].className.indexOf(MOVE_MAP[face].centers[3]) > -1)) {
+        cubelets.push(cubelet);
+      } else if (cubelet.childNodes.length === 2) {
+        const facingA = cubelet.childNodes[0].className.split('-').pop();
+        const facingB = cubelet.childNodes[1].className.split('-').pop();
+        if (MOVE_MAP[face].edges.indexOf(`${facingA}-${facingB}`) > -1 ||
+            MOVE_MAP[face].edges.indexOf(`${facingB}-${facingA}`) > -1 ) {
+          cubelets.push(cubelet);
+        }
+      }
+    }
+
+    for (let i = 0; i < cubelets.length; i++) {
+      const triple = _getTransformValue(cubelets[i].style.transform);
+      cubelets[i].style.transform = `
+        rotateX(${(MOVE_MAP[face].rX || 0) * step + triple.rX}deg)
+        rotateY(${(MOVE_MAP[face].rY || 0) * step + triple.rY}deg)
+        rotateZ(${(MOVE_MAP[face].rZ || 0) * step + triple.rZ}deg)
+        translateX(${triple.tX}px)
+        translateY(${triple.tY}px)
+        translateZ(${triple.tZ}px)
+      `;
+
+      const children = cubelets[i].childNodes;
+      for (let j = 0; j < children.length; j++) {
+        const current = children[j].className.split('-').pop();
+        if (current !== face) {
+          children[j].classList.remove(`square-${current}`);
+          children[j].classList.add(`square-${step > 0 ? MOVE_MAP[face].swap[current] : MOVE_MAP[face].swapReverse[current]}`);
+        }
+      }
+
+      setTimeout(() => {
+        _reinitCubelet(self, cubelets[i]);
+      }, 310);
+    }
   };
 
   const _getTransformValue = (transform) => {

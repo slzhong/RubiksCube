@@ -20,6 +20,12 @@
       _rotateCube(e.keyCode);
     } else if (e.keyCode == 83) {
       _shuffleCube();
+    } else if (e.keyCode == 32 && e.shiftKey) {
+      _resetCube();
+    } else if (e.keyCode == 32) {
+      _repositionCube();
+    } else  if (e.keyCode >= 49 && e.keyCode <= 57) {
+      _easterCube(e.keyCode - 49);
     } else {
       _moveCube(e);
     }
@@ -59,6 +65,12 @@
       face = 'left';
     } else if (e.keyCode == 82) {
       face = 'right';
+    } else if (e.keyCode == 88) {
+      face = 'x';
+    } else if (e.keyCode == 89) {
+      face = 'y';
+    } else if (e.keyCode == 90) {
+      face = 'z';
     }
 
     if (face) {
@@ -68,6 +80,42 @@
 
   function _shuffleCube() {
     cube.shuffle();
+  }
+
+  function _repositionCube() {
+    cube.reposition();
+  }
+
+  function _resetCube() {
+    console.log('wer');
+    cube = new Cube();
+  }
+
+  function _easterCube(idx) {
+    const easterNames = [
+      'CHECKERBOARD',
+      'CROSSES',
+      'ROAMING CENTER'
+    ];
+
+    const easterMoves = [
+      [['x', 1], ['x', 1], ['y', 1], ['y', 1], ['z', 1], ['z', 1]],
+      [['x', 1], ['x', 1], ['y', 1], ['back', 1], ['back', 1], ['y', -1], ['y', -1], ['back', 1], ['back', 1], ['y', 1], ['z', 1], ['left', 1], ['left', 1], ['z', -1], ['z', -1], ['left', 1], ['left', 1], ['z', 1]],
+      [['y', 1], ['x', 1], ['y', -1], ['x', -1], [null, 0], [null, 0], [null, 0], ['y', 1], ['x', 1], ['y', -1], ['x', -1], [null, 0], [null, 0], [null, 0], ['y', 1], ['x', 1], ['y', -1], ['x', -1]]
+    ];
+
+    if (idx < easterMoves.length) {
+      document.getElementById('easter').innerHTML = easterNames[idx];
+      const iter = setInterval(() => {
+        if (easterMoves[idx].length <= 0) {
+          clearInterval(iter);
+          document.getElementById('easter').innerHTML = '';
+        } else {
+          const move = easterMoves[idx].shift();
+          cube.move(move[0], move[1]);
+        }
+      }, 350);
+    }
   }
 
 })();
