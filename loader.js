@@ -26,6 +26,8 @@
       _repositionCube();
     } else  if (e.keyCode >= 49 && e.keyCode <= 57) {
       _easterCube(e.keyCode - 49);
+    } else if (e.keyCode == 73) {
+      _infiniteCube();
     } else {
       _moveCube(e);
     }
@@ -116,6 +118,22 @@
         }
       }, 350);
     }
+  }
+
+  function _infiniteCube() {
+    cube.body.style.transition = 'transform 0.3s linear';
+    document.getElementById('hint').style.display = 'none';
+    document.body.webkitRequestFullScreen();
+    document.body.style.cursor = 'none';
+
+    setInterval(() => {
+      cube.rotate(2, 2, 2);
+    }, 300);
+
+    setInterval(() => {
+      const moves = ['front', 'back', 'up', 'down', 'left', 'right', 'x', 'y', 'z'];
+      cube.move(moves[Math.floor(Math.random() * moves.length)], Math.random() * 2 > 1 ? 1 : -1);
+    }, 350);
   }
 
 })();
