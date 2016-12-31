@@ -1,6 +1,7 @@
 (() => {
 
   let cube;
+  let orientation;
 
   window.onload = () => {
     _initCube();
@@ -13,6 +14,7 @@
 
   function _initEvents() {
     document.onkeydown = _handleKeyDown;
+    window.addEventListener('deviceorientation', _handleOrientation, true);
   }
 
   function _handleKeyDown(e) {
@@ -134,6 +136,26 @@
       const moves = ['front', 'back', 'up', 'down', 'left', 'right', 'x', 'y', 'z'];
       cube.move(moves[Math.floor(Math.random() * moves.length)], Math.random() * 2 > 1 ? 1 : -1);
     }, 350);
+  }
+
+  function _handleOrientation(e) {
+    if (!orientation) {
+      _initOrientation();
+    } else {
+      document.getElementById('cube').style.transform = `
+        rotateX(${e.beta * -0.5}deg)
+        rotateY(${e.gamma * 0.5}deg)
+      `;
+    }
+  }
+
+  function _initOrientation() {
+    orientation = true;
+
+    document.getElementById('hint').style.display = 'none';
+    document.getElementById('cube').style.transform = '';
+    document.getElementById('cube').style.transition = '';
+    // document.getElementById('cube').style.transformOrigin = '200px 200px';
   }
 
 })();

@@ -31,6 +31,12 @@ body {
   text-align: center;
 }
 
+#orientation {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
 #canvas {
   position: absolute;
   top: 0;
