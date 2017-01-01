@@ -14,7 +14,11 @@
 
   function _initEvents() {
     document.onkeydown = _handleKeyDown;
-    window.addEventListener('deviceorientation', _handleOrientation, true);
+    
+    if (navigator.userAgent.indexOf('iPhone OS') > -1 ||
+        navigator.userAgent.indexOf('Android') > -1) {
+      window.addEventListener('deviceorientation', _handleOrientation, true);
+    }
   }
 
   function _handleKeyDown(e) {
@@ -155,7 +159,6 @@
     document.getElementById('hint').style.display = 'none';
     document.getElementById('cube').style.transform = '';
     document.getElementById('cube').style.transition = '';
-    // document.getElementById('cube').style.transformOrigin = '200px 200px';
   }
 
 })();
