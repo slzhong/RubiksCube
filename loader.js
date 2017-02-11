@@ -24,6 +24,8 @@
   function _handleKeyDown(e) {
     if (e.keyCode >= 37 && e.keyCode <= 40) {
       _rotateCube(e.keyCode);
+    } else if (e.keyCode == 83 && e.shiftKey) {
+      _solveCube();
     } else if (e.keyCode == 83) {
       _shuffleCube();
     } else if (e.keyCode == 32 && e.shiftKey) {
@@ -32,8 +34,10 @@
       _repositionCube();
     } else  if (e.keyCode >= 49 && e.keyCode <= 57) {
       _easterCube(e.keyCode - 49);
-    } else if (e.keyCode == 73) {
+    } else if (e.keyCode == 190) {
       _infiniteCube();
+    } else if (e.keyCode == 71) {
+      window.open('https://github.com/sherlock917/Rubiks-AI');
     } else {
       _moveCube(e);
     }
@@ -95,7 +99,6 @@
   }
 
   function _resetCube() {
-    console.log('wer');
     cube = new Cube();
   }
 
@@ -159,6 +162,10 @@
     document.getElementById('hint').style.display = 'none';
     document.getElementById('cube').style.transform = '';
     document.getElementById('cube').style.transition = '';
+  }
+
+  function _solveCube() {
+    cube.solve();
   }
 
 })();

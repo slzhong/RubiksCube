@@ -42,7 +42,14 @@
         if (++count > 50) {
           clearInterval(iter);
         } else {
-          this.move(moves[Math.floor(Math.random() * moves.length)], Math.random() * 2 > 1 ? 1 : -1);
+          const move = moves[Math.floor(Math.random() * moves.length)];
+          const step = Math.random() * 2 > 1 ? 1 : -1;
+          this.move(move, step);
+          this.tmp = this.tmp || [];
+          this.tmp.push({
+            move: move,
+            step: step
+          });
         }
       }, 350);
     }
@@ -56,6 +63,19 @@
         translateY(0px)
         translateZ(0px)
       `;
+    }
+
+    solve() {
+      if (this.tmp) {
+        const iter = setInterval(() => {
+          if (this.tmp.length <= 0) {
+            clearInterval(iter);
+          } else {
+            const step = this.tmp.pop();
+            this.move(step.move, -step.step);
+          }
+        }, 350);
+      }
     }
 
   };
@@ -226,220 +246,274 @@
   const _initCenterCubelets = (self) => {
     _initCubelet(self, 0, 0, 100, [{
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'center'
     }]);
 
     _initCubelet(self, 0, 0, -100, [{
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'center'
     }]);
 
     _initCubelet(self, 0, -100, 0, [{
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'center'
     }]);
 
     _initCubelet(self, 0, 100, 0, [{
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'center'
     }]);
 
     _initCubelet(self, 100, 0, 0, [{
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'center'
     }]);
 
     _initCubelet(self, -100, 0, 0, [{
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'center'
     }]);
   };
 
   const _initEdgeCubelets = (self) => {
     _initCubelet(self, -100, 0, 100, [{
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'edge'
     }, {
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'edge'
     }]);
 
     _initCubelet(self, 0, -100, 100, [{
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'edge'
     }, {
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'edge'
     }]);
 
     _initCubelet(self, 100, 0, 100, [{
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'edge'
     }, {
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'edge'
     }]);
 
     _initCubelet(self, 0, 100, 100, [{
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'edge'
     }, {
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'edge'
     }]);
 
     _initCubelet(self, -100, 0, -100, [{
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'edge'
     }, {
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'edge'
     }]);
 
     _initCubelet(self, 100, 0, -100, [{
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'edge'
     }, {
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'edge'
     }]);
 
     _initCubelet(self, 0, -100, -100, [{
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'edge'
     }, {
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'edge'
     }]);
 
     _initCubelet(self, 0, 100, -100, [{
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'edge'
     }, {
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'edge'
     }]);
 
     _initCubelet(self, -100, -100, 0, [{
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'edge'
     }, {
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'edge'
     }]);
 
     _initCubelet(self, -100, 100, 0, [{
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'edge'
     }, {
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'edge'
     }]);
 
     _initCubelet(self, 100, -100, 0, [{
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'edge'
     }, {
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'edge'
     }]);
 
     _initCubelet(self, 100, 100, 0, [{
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'edge'
     }, {
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'edge'
     }]);
   };
 
   const _initCornerCubeletes = (self) => {
     _initCubelet(self, -100, -100, 100, [{
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'corner'
     }, {
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'corner'
     }, {
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'corner'
     }]);
 
     _initCubelet(self, 100, -100, 100, [{
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'corner'
     }, {
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'corner'
     }, {
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'corner'
     }]);
 
     _initCubelet(self, -100, 100, 100, [{
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'corner'
     }, {
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'corner'
     }, {
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'corner'
     }]);
 
     _initCubelet(self, 100, 100, 100, [{
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'corner'
     }, {
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'corner'
     }, {
       color: 'white',
-      facing: 'front'
+      facing: 'front',
+      type: 'corner'
     }]);
 
     _initCubelet(self, -100, -100, -100, [{
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'corner'
     }, {
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'corner'
     }, {
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'corner'
     }]);
 
     _initCubelet(self, 100, -100, -100, [{
       color: 'red',
-      facing: 'up'
+      facing: 'up',
+      type: 'corner'
     }, {
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'corner'
     }, {
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'corner'
     }]);
 
     _initCubelet(self, -100, 100, -100, [{
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'corner'
     }, {
       color: 'blue',
-      facing: 'left'
+      facing: 'left',
+      type: 'corner'
     }, {
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'corner'
     }]);
 
     _initCubelet(self, 100, 100, -100, [{
       color: 'orange',
-      facing: 'down'
+      facing: 'down',
+      type: 'corner'
     }, {
       color: 'green',
-      facing: 'right'
+      facing: 'right',
+      type: 'corner'
     }, {
       color: 'yellow',
-      facing: 'back'
+      facing: 'back',
+      type: 'corner'
     }]);
   };
 
@@ -483,7 +557,10 @@
     for (let i in squares) {
       const params = squares[i];
       const square = document.createElement('div');
-      square.className = `square square-${params.color} square-${params.facing}`;
+      square.className = `square square-${params.color}`;
+      square.setAttribute('data-color', params.color);
+      square.setAttribute('data-facing', params.facing);
+      square.setAttribute('data-type', params.type);
       square.style.transform = `
         rotateX(${facingMap[params.facing].rX || 0}deg)
         rotateY(${facingMap[params.facing].rY || 0}deg)
@@ -503,10 +580,11 @@
     const children = cubelet.childNodes;
     let childrenColors = [];
     let childrenFacings = [];
+    let childrenTypes = [];
     for (let i = 0; i < children.length; i++) {
-      const classList = children[i].classList;
-      childrenColors.push(classList[1].split('-').pop());
-      childrenFacings.push(classList[2].split('-').pop());
+      childrenColors.push(children[i].getAttribute('data-color'));
+      childrenFacings.push(children[i].getAttribute('data-facing'));
+      childrenTypes.push(children[i].getAttribute('data-type'));
     }
 
     let tX = childrenFacings.indexOf('left') > -1 ? -100 : childrenFacings.indexOf('right') > -1 ? 100 : 0;
@@ -517,7 +595,8 @@
     for (let i = 0; i < childrenColors.length; i++) {
       childrenParams.push({
         color: childrenColors[i],
-        facing: childrenFacings[i]
+        facing: childrenFacings[i],
+        type: childrenTypes[i]
       });
     }
 
@@ -526,7 +605,7 @@
   };
 
   const _moveFaces = (self, face, step) => {
-    const faces = document.querySelectorAll(`.square-${face}`);
+    const faces = document.querySelectorAll(`.square[data-facing="${face}"]`);
     for (let i = 0; i < faces.length; i++) {
       const triple = _getTransformValue(faces[i].parentNode.style.transform);
       faces[i].parentNode.style.transform = `
@@ -540,10 +619,9 @@
 
       const siblings = faces[i].parentNode.childNodes;
       for (let j = 0; j < siblings.length; j++) {
-        const current = siblings[j].className.split('-').pop();
+        const current = siblings[j].getAttribute('data-facing');
         if (current !== face) {
-          siblings[j].classList.remove(`square-${current}`);
-          siblings[j].classList.add(`square-${step > 0 ? MOVE_MAP[face].swap[current] : MOVE_MAP[face].swapReverse[current]}`);
+          siblings[j].setAttribute('data-facing', step > 0 ? MOVE_MAP[face].swap[current] : MOVE_MAP[face].swapReverse[current]);
         }
       }
 
@@ -557,15 +635,11 @@
     let cubelets = [];
     for (let i = 0; i < self.body.childNodes.length; i++) {
       let cubelet = self.body.childNodes[i];
-      if (cubelet.childNodes.length === 1 && 
-          (cubelet.childNodes[0].className.indexOf(MOVE_MAP[face].centers[0]) > -1 ||
-           cubelet.childNodes[0].className.indexOf(MOVE_MAP[face].centers[1]) > -1 ||
-           cubelet.childNodes[0].className.indexOf(MOVE_MAP[face].centers[2]) > -1 ||
-           cubelet.childNodes[0].className.indexOf(MOVE_MAP[face].centers[3]) > -1)) {
+      if (cubelet.childNodes.length === 1 && MOVE_MAP[face].centers.indexOf(cubelet.childNodes[0].getAttribute('data-facing')) > -1) {
         cubelets.push(cubelet);
       } else if (cubelet.childNodes.length === 2) {
-        const facingA = cubelet.childNodes[0].className.split('-').pop();
-        const facingB = cubelet.childNodes[1].className.split('-').pop();
+        const facingA = cubelet.childNodes[0].getAttribute('data-facing');
+        const facingB = cubelet.childNodes[1].getAttribute('data-facing');
         if (MOVE_MAP[face].edges.indexOf(`${facingA}-${facingB}`) > -1 ||
             MOVE_MAP[face].edges.indexOf(`${facingB}-${facingA}`) > -1 ) {
           cubelets.push(cubelet);
@@ -586,10 +660,9 @@
 
       const children = cubelets[i].childNodes;
       for (let j = 0; j < children.length; j++) {
-        const current = children[j].className.split('-').pop();
+        const current = children[j].getAttribute('data-facing');
         if (current !== face) {
-          children[j].classList.remove(`square-${current}`);
-          children[j].classList.add(`square-${step > 0 ? MOVE_MAP[face].swap[current] : MOVE_MAP[face].swapReverse[current]}`);
+          children[j].setAttribute('data-facing', step > 0 ? MOVE_MAP[face].swap[current] : MOVE_MAP[face].swapReverse[current]);
         }
       }
 
