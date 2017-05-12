@@ -1,5 +1,5 @@
-# Rubiks-AI
+# RubiksCube
 
-An AI to solve a Rubik's Cube Edit
+It is now only a rubiks cube.
 
 demo: <http://www.slzhong.cn/rubiks/>
